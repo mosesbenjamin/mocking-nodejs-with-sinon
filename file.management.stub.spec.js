@@ -24,4 +24,15 @@ describe('File Management', () => {
 
     expect(() => fileManagement.createFile('test.txt')).to.throw()
   })
+
+  it('createFileSafe should create a file named test1 when test already exists', () => {
+    const writeStub = sinon.stub(fs, 'writeFileSync')
+    const readStub = sinon.stub(fs, 'readdirSync')
+
+    const fileManagement = proxyquire('./file.management', { fs })
+
+    writeStub.withArgs('./data/test.txt').throws(new Error())
+    writeStub.returns(undefined)
+    readStub.returns(['test.txt'])
+  })
 })
