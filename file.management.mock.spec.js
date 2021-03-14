@@ -18,4 +18,20 @@ describe('File Management', () => {
 
     writeMock.verify()
   })
+
+  it('createFileSafe should create a new file with a number appended', () => {
+    const writeMock = sinon.mock(fs)
+
+    writeMock.expects('writeFileSync').withArgs('./data/test.txt').throws()
+
+    writeMock.expects('writeFileSync').withArgs('./data/test1.txt').once()
+
+    writeMock.expects('readdirSync').returns(['test.txt']).once()
+
+    const fileManagement = proxyquire('./file.management', { fs })
+
+    fileManagement.createFileSafe('test.txt')
+
+    writeMock.verify()
+  })
 })
