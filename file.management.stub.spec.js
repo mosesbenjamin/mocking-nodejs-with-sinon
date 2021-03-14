@@ -35,4 +35,31 @@ describe('File Management', () => {
     writeStub.returns(undefined)
     readStub.returns(['test.txt'])
   })
+
+  it('getAllFiles should return a list of files', () => {
+    const readStub = sinon.stub(fs, 'readdir')
+
+    const fileManagement = proxyquire('./file.management', { fs })
+
+    readStub.yields(null, ['test.txt'])
+    fileManagement.getAllFiles((err, data) => {
+      expect(data).to.eql(['test.txt'])
+    })
+  })
+
+  it('getAllFilesPromise should return a list of files', () => {
+    const readStub = sinon.stub(fs, 'readdir')
+
+    const util = {
+      promisify: sinon.stub().returns(readStub),
+    }
+
+    const fileManagement = proxyquire('./file.management', { fs, util })
+
+    readStub.resolves(['test.txt'])
+
+    return fileManagement
+      .getAllFilesPromise()
+      .then((files) => expect(files).to.eql(['test.txt']))
+  })
 })
