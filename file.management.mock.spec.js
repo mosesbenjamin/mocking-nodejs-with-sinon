@@ -34,4 +34,15 @@ describe('File Management', () => {
 
     writeMock.verify()
   })
+
+  it('createFile should never call writeFileSync when the file is empty', () => {
+    const writeMock = sinon.mock(fs)
+    writeMock.expects('writeFileSync').never()
+    const fileManagement = proxyquire('./file.management', { fs })
+    try {
+      fileManagement.createFile()
+    } catch (error) {}
+
+    writeMock.verify()
+  })
 })
